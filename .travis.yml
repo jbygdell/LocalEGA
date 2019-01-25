@@ -1,5 +1,6 @@
 language: python
 python: 3.6
+before_install: BUILD=$(node extras/parse-labels.js $TRAVIS_PULL_REQUEST)
 install: true
 
 git:
@@ -10,7 +11,7 @@ stages:
   - name: tests
     if: type IN (push, pull_request)
   - name: images
-    if: type = pull_request AND branch = master
+    if: type = pull_request AND branch = master OR $BUILD = build-images
 
 jobs:
   include:
@@ -73,7 +74,8 @@ jobs:
         - bats security
     - stage: images
       name: "Images Build"
-      script: echo 'Next PR'
+      script:
+        - echo 'Next PR'
     #
     # Old tests. Make them succeed with "|| :"
     #
